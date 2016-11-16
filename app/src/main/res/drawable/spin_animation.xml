@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<animation-list android:id="@+id/animation"
+                android:oneshot="false"
+                xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/photoshoped_frame_0002" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0006" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0010" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0014" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0018" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0022" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0026" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0030" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0034" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0038" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0042" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0046" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0050" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0054" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0058" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0062" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0066" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0070" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0074" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0078" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0082" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0086" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0090" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0094" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0098" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0102" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0106" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0110" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0114" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0118" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0122" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0126" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0130" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0134" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0138" android:duration="50"/>
+    <item android:drawable="@drawable/photoshoped_frame_0142" android:duration="50"/>
+
+</animation-list>

@@ -1,23 +1,45 @@
 package com.example.filip.cardreaderaau;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.util.Log;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.Objects;
+
+import layout.WaitingFragment;
 
 /**
  * Created by filip on 15/11/2016.
  */
 
-public class MyReaderCallback implements NfcAdapter.ReaderCallback{
+public class MyReaderCallback implements NfcAdapter.ReaderCallback {
 
     public static final String TAG = "M_TAG";
 
     private static final String SELECT_APDU_HEADER = "00A40400";
     private static final String AAU_ACCESSSYSTEM_AID = "F222222222";
+
+    StartAnimationInterface mStartAnim;
+
+
+    public interface StartAnimationInterface{
+        void notifyAnimation();
+    }
+
+    MyReaderCallback(Activity activity){
+        try {
+            mStartAnim = (StartAnimationInterface) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
 
     @Override
     public void onTagDiscovered(Tag tag) {
@@ -40,6 +62,10 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback{
                 }
 
                 Log.i(TAG, output);
+
+                Log.i(TAG, "called interface");
+                mStartAnim.notifyAnimation();
+
 
             } catch (IOException e) {
                 Log.i(TAG, "Cought following IOException");
