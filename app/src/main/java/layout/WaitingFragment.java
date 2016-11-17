@@ -1,9 +1,10 @@
 package layout;
 
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +22,14 @@ public class WaitingFragment extends Fragment {
 
     public static final String TAG = "M_TAG";
 
-    ImageView animationView;
+    ImageView myImageView;
     AnimationDrawable mAnimation;
-    Animation animationFadeOut;
+    Animation animationFade;
     TextView statusMessage;
     View view;
+
+    private String messagePasser;
+    private int status;
 
 
     public WaitingFragment() {
@@ -46,10 +50,12 @@ public class WaitingFragment extends Fragment {
 
         statusMessage = (TextView) view.findViewById(R.id.status_message);
 
-        animationView = (ImageView) view.findViewById(R.id.imageView);
-        animationView.setBackgroundResource(R.drawable.spin_animation);
+        myImageView = (ImageView) view.findViewById(R.id.imageView);
+        myImageView.setBackgroundResource(R.drawable.spin_animation);
 
-        mAnimation = (AnimationDrawable) animationView.getBackground();
+//        myImageView.setBackgroundResource(R.drawable.checkmark);
+
+        mAnimation = (AnimationDrawable) myImageView.getBackground();
 
         mAnimation.start();
 
@@ -59,8 +65,11 @@ public class WaitingFragment extends Fragment {
 
     }
 
-    public void notifyAnim() {
+    public void triggerAnim(final int status, String message) {
         Log.i(TAG, "Animantion notified");
+
+        messagePasser = message;
+        this.status = status;
 
         getActivity().runOnUiThread(new Runnable() {
 
@@ -70,13 +79,29 @@ public class WaitingFragment extends Fragment {
                 mAnimation.stop();
                 mAnimation.setVisible(false, false);
 
-                animationFadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
-                animationView.startAnimation(animationFadeOut);
-                animationView.setVisibility(View.INVISIBLE);
+                if (status == MyReaderCallback.STATUS_TAG_DETECTED){
+                    view.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.transition_green));
+                }
+                else {
+                    view.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.transition_red));
+                }
+                TransitionDrawable transition = (TransitionDrawable) view.getBackground();
+                transition.startTransition(300);
 
-                statusMessage.setText(R.string.tag_found_msg);
 
-                view.setBackgroundColor(Color.GREEN);
+                animationFade = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
+                myImageView.startAnimation(animationFade);
+//                myImageView.setVisibility(View.INVISIBLE);
+
+                if (status == MyReaderCallback.STATUS_TAG_DETECTED){
+                    myImageView.setBackgroundResource(R.drawable.checkmark);
+                    animationFade = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+                    myImageView.startAnimation(animationFade);
+                }
+
+                statusMessage.setText(messagePasser);
+
+
             }
         });
 

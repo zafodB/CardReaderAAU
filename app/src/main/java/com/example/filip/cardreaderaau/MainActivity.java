@@ -1,12 +1,10 @@
 package com.example.filip.cardreaderaau;
 
-import android.graphics.drawable.AnimationDrawable;
 import android.nfc.NfcAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
 
 import layout.WaitingFragment;
 
@@ -44,13 +42,13 @@ public class MainActivity extends AppCompatActivity implements MyReaderCallback.
     }
 
     @Override
-    public void notifyAnimation() {
+    public void notifyAnimation(int status, String message) {
         Log.i(TAG, "I hear you");
         if (fragment == null){
             Log.i(TAG, "Fragment not ready yet");
         }
         else
             Log.i(TAG, "Notifying animation");
-            fragment.notifyAnim();
+            fragment.triggerAnim(status, message);
     }
 }

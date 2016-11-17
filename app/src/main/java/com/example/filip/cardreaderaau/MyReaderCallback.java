@@ -22,17 +22,22 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
 
     public static final String TAG = "M_TAG";
 
+    public static final int STATUS_TAG_DETECTED = 1;
+    public static final int STATUS_TAG_ERROR = 0;
+
     private static final String SELECT_APDU_HEADER = "00A40400";
     private static final String AAU_ACCESSSYSTEM_AID = "F222222222";
 
     StartAnimationInterface mStartAnim;
+    Activity currentActivity;
 
 
     public interface StartAnimationInterface{
-        void notifyAnimation();
+        void notifyAnimation(int status, String message);
     }
 
     MyReaderCallback(Activity activity){
+        currentActivity = activity;
         try {
             mStartAnim = (StartAnimationInterface) activity;
         } catch (ClassCastException e) {
@@ -64,7 +69,7 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
                 Log.i(TAG, output);
 
                 Log.i(TAG, "called interface");
-                mStartAnim.notifyAnimation();
+                mStartAnim.notifyAnimation(STATUS_TAG_DETECTED ,currentActivity.getString(R.string.tag_found_msg));
 
 
             } catch (IOException e) {
