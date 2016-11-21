@@ -28,11 +28,11 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
     private static final String SELECT_APDU_HEADER = "00A40400";
     private static final String AAU_ACCESSSYSTEM_AID = "F222222222";
 
-    StartAnimationInterface mStartAnim;
-    Activity currentActivity;
+    private StartAnimationInterface mStartAnim;
+    private Activity currentActivity;
 
 
-    public interface StartAnimationInterface{
+    interface StartAnimationInterface{
         void notifyAnimation(int status, String message);
     }
 
@@ -73,13 +73,15 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
 
 
             } catch (IOException e) {
-                Log.i(TAG, "Cought following IOException");
+                Log.i(TAG, "Caught following IOException");
                 Log.e(TAG, e.getMessage());
 //                Log.i(TAG, e.getStackTrace().toString());
                 e.printStackTrace();
             }
         }else {
             Log.i(TAG, "IsoDep is null");
+            mStartAnim.notifyAnimation(STATUS_TAG_ERROR, currentActivity.getString(R.string.tag_error_msg));
+
         }
 
     }

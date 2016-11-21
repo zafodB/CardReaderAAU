@@ -17,6 +17,9 @@ import android.widget.TextView;
 import com.example.filip.cardreaderaau.MyReaderCallback;
 import com.example.filip.cardreaderaau.R;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class WaitingFragment extends Fragment {
 
@@ -26,6 +29,7 @@ public class WaitingFragment extends Fragment {
     AnimationDrawable mAnimation;
     Animation animationFade;
     TextView statusMessage;
+    TransitionDrawable transition;
     View view;
 
     private String messagePasser;
@@ -50,14 +54,7 @@ public class WaitingFragment extends Fragment {
 
         statusMessage = (TextView) view.findViewById(R.id.status_message);
 
-        myImageView = (ImageView) view.findViewById(R.id.imageView);
-        myImageView.setBackgroundResource(R.drawable.spin_animation);
-
-//        myImageView.setBackgroundResource(R.drawable.checkmark);
-
-        mAnimation = (AnimationDrawable) myImageView.getBackground();
-
-        mAnimation.start();
+        runAnimation();
 
 
         return view;
@@ -77,35 +74,69 @@ public class WaitingFragment extends Fragment {
             public void run() {
                 Log.i(TAG, "Ran on UI thread");
                 mAnimation.stop();
-                mAnimation.setVisible(false, false);
 
-                if (status == MyReaderCallback.STATUS_TAG_DETECTED){
+                if (status == MyReaderCallback.STATUS_TAG_DETECTED) {
                     view.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.transition_green));
-                }
-                else {
+                } else if (status == MyReaderCallback.STATUS_TAG_ERROR) {
                     view.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.transition_red));
+                } else {
                 }
-                TransitionDrawable transition = (TransitionDrawable) view.getBackground();
-                transition.startTransition(300);
 
+                transition = (TransitionDrawable) view.getBackground();
+                transition.startTransition(300);
 
                 animationFade = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
                 myImageView.startAnimation(animationFade);
 //                myImageView.setVisibility(View.INVISIBLE);
 
-                if (status == MyReaderCallback.STATUS_TAG_DETECTED){
+                if (status == MyReaderCallback.STATUS_TAG_DETECTED) {
                     myImageView.setBackgroundResource(R.drawable.checkmark);
-                    animationFade = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
-                    myImageView.startAnimation(animationFade);
+                } else if (status == MyReaderCallback.STATUS_TAG_ERROR) {
+                    myImageView.setBackgroundResource(R.drawable.crossmark);
+                } else {
                 }
 
+                animationFade = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+                myImageView.startAnimation(animationFade);
                 statusMessage.setText(messagePasser);
 
+                Timer mTimer = new Timer();
+                TimerTask mTimerTask = new TimerTask() {
+                    @Override
+                    public void run() {
 
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                myImageView.clearAnimation();
+                                transition.reverseTransition(300);
+                                statusMessage.setText(getResources().getText(R.string.status_message_text));
+                                Log.i(TAG, "why again?");
+                                runAnimation();
+                            }
+                        });
+                    }
+                };
+                mTimer.schedule(mTimerTask, 3000);
             }
         });
 
 
+    }
+
+    void runAnimation() {
+        if (view != null) {
+            if (myImageView == null) {
+                myImageView = (ImageView) view.findViewById(R.id.imageView);
+            }
+            myImageView.setBackgroundResource(R.drawable.spin_animation);
+
+            mAnimation = null;
+            mAnimation = (AnimationDrawable) myImageView.getBackground();
+            mAnimation.start();
+
+            Log.i(TAG, "animation restarted");
+        }
     }
 
 }

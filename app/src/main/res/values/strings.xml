@@ -3,5 +3,7 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="status_message_text">Waiting for a tag</string>
+    <string name="tag_error_msg">Error reading a tag. Try again.</string>
+
     <string name="tag_found_msg">Tag found!</string>
 </resources>
