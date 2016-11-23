@@ -6,4 +6,16 @@
     <string name="tag_error_msg">Error reading a tag. Try again.</string>
 
     <string name="tag_found_msg">Tag found!</string>
+
+
+    <string-array name="spinner_items">
+        <item>Aalborg University</item>
+        <item>Fitness World</item>
+        <item>KAB</item>
+        <item>DTU</item>
+
+    </string-array>
+
+    <string name="choose_institution">Choose Institution.</string>
+
 </resources>

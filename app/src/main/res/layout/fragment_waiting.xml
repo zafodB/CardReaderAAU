@@ -28,4 +28,17 @@
 
         />
 
+    <Spinner
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/status_message"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="71dp"
+
+        android:prompt="@string/choose_institution"
+        android:entries="@array/spinner_items"
+
+        android:id="@+id/spinner"
+        android:minWidth="30dp"/>
+
 </RelativeLayout>

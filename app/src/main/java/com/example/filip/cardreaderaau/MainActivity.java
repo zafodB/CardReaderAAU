@@ -1,6 +1,8 @@
 package com.example.filip.cardreaderaau;
 
+import android.content.Intent;
 import android.nfc.NfcAdapter;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,7 +10,7 @@ import android.util.Log;
 
 import layout.WaitingFragment;
 
-public class MainActivity extends AppCompatActivity implements MyReaderCallback.StartAnimationInterface{
+public class MainActivity extends FragmentActivity implements MyReaderCallback.StartAnimationInterface{
 
     public static final String TAG = "M_TAG";
     public static final String FRAGMENT_TAG = "readerFragment";
@@ -34,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements MyReaderCallback.
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-        Log.i(TAG, "Created NFC adapter");
 
         MyReaderCallback mreadercallback = new MyReaderCallback(this);
 
@@ -43,12 +44,10 @@ public class MainActivity extends AppCompatActivity implements MyReaderCallback.
 
     @Override
     public void notifyAnimation(int status, String message) {
-        Log.i(TAG, "I hear you");
         if (fragment == null){
             Log.i(TAG, "Fragment not ready yet");
         }
         else
-            Log.i(TAG, "Notifying animation");
             fragment.triggerAnim(status, message);
     }
 }

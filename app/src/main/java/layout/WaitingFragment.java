@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.filip.cardreaderaau.MyReaderCallback;
@@ -33,6 +34,8 @@ public class WaitingFragment extends Fragment {
     View view;
 
     private String messagePasser;
+    Spinner mSpinner;
+
     private int status;
 
 
@@ -54,6 +57,8 @@ public class WaitingFragment extends Fragment {
 
         statusMessage = (TextView) view.findViewById(R.id.status_message);
 
+        mSpinner = (Spinner) view.findViewById(R.id.spinner);
+
         runAnimation();
 
 
@@ -63,7 +68,6 @@ public class WaitingFragment extends Fragment {
     }
 
     public void triggerAnim(final int status, String message) {
-        Log.i(TAG, "Animantion notified");
 
         messagePasser = message;
         this.status = status;
@@ -72,7 +76,6 @@ public class WaitingFragment extends Fragment {
 
             @Override
             public void run() {
-                Log.i(TAG, "Ran on UI thread");
                 mAnimation.stop();
 
                 if (status == MyReaderCallback.STATUS_TAG_DETECTED) {
@@ -111,7 +114,6 @@ public class WaitingFragment extends Fragment {
                                 myImageView.clearAnimation();
                                 transition.reverseTransition(300);
                                 statusMessage.setText(getResources().getText(R.string.status_message_text));
-                                Log.i(TAG, "why again?");
                                 runAnimation();
                             }
                         });
@@ -135,10 +137,13 @@ public class WaitingFragment extends Fragment {
             mAnimation = (AnimationDrawable) myImageView.getBackground();
             mAnimation.start();
 
-            Log.i(TAG, "animation restarted");
         }
     }
 
+
+    public int getSpinnerItem(){
+        return mSpinner.getSelectedItemPosition();
+    }
 }
 
 

@@ -2,14 +2,14 @@ package com.example.filip.cardreaderaau;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
+import android.nfc.tech.MifareUltralight;
 import android.util.Log;
+import android.webkit.WebViewFragment;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 import layout.WaitingFragment;
@@ -26,20 +26,21 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
     public static final int STATUS_TAG_ERROR = 0;
 
     private static final String SELECT_APDU_HEADER = "00A40400";
-    private static final String AAU_ACCESSSYSTEM_AID = "F222222222";
+    private static final String ACCESSSYSTEM_AID = "F231120161";
+
 
     private StartAnimationInterface mStartAnim;
-    private Activity currentActivity;
+    private MainActivity currentActivity;
 
 
-    interface StartAnimationInterface{
+    interface StartAnimationInterface {
         void notifyAnimation(int status, String message);
     }
 
-    MyReaderCallback(Activity activity){
+    MyReaderCallback(MainActivity activity) {
         currentActivity = activity;
         try {
-            mStartAnim = (StartAnimationInterface) activity;
+            mStartAnim = activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnHeadlineSelectedListener");
@@ -49,27 +50,23 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
     @Override
     public void onTagDiscovered(Tag tag) {
         IsoDep mIsoDep = IsoDep.get(tag);
+        MifareUltralight mMifare = MifareUltralight.get(tag);
 
-        Log.i(TAG, "Tag discovered");
+//        Log.i(TAG, "Tag discovered");
 
-        if (mIsoDep != null){
+        if (mIsoDep != null) {
             try {
                 mIsoDep.connect();
 
-                byte[] sendCommand = BuildSelectApdu(AAU_ACCESSSYSTEM_AID);
+                byte[] sendCommand = BuildSelectApdu(ACCESSSYSTEM_AID);
 
-                byte[] reply1 = mIsoDep.transceive(sendCommand);
+                byte[] reply = mIsoDep.transceive(sendCommand);
 
-                String output = "reply1 is: ";
-
-                for (byte b:reply1){
-                    output = output.concat(Objects.toString(b) + " ");
-                }
+                String output = new String(reply);
 
                 Log.i(TAG, output);
 
-                Log.i(TAG, "called interface");
-                mStartAnim.notifyAnimation(STATUS_TAG_DETECTED ,currentActivity.getString(R.string.tag_found_msg));
+                mStartAnim.notifyAnimation(STATUS_TAG_DETECTED, currentActivity.getString(R.string.tag_found_msg));
 
 
             } catch (IOException e) {
@@ -78,16 +75,36 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
 //                Log.i(TAG, e.getStackTrace().toString());
                 e.printStackTrace();
             }
+        } else if (mMifare != null){
+            try {
+
+                mMifare.connect();
+
+                byte[] tagData = mMifare.readPages(0);
+
+                String serialNo = "";
+
+                for (int i = 0; i <= 9 ; i++){
+                    serialNo = serialNo + (String.valueOf(tagData[i]));
+                }
+
+                Log.i(TAG, "Serial number is: " + serialNo);
+
+                mStartAnim.notifyAnimation(STATUS_TAG_DETECTED, currentActivity.getString(R.string.tag_found_msg));
+
+            } catch (IOException e) {
+                Log.i(TAG, "IO exception");
+                e.printStackTrace();
+            }
         }else {
-            Log.i(TAG, "IsoDep is null");
             mStartAnim.notifyAnimation(STATUS_TAG_ERROR, currentActivity.getString(R.string.tag_error_msg));
-
         }
-
     }
+
 
     public static byte[] BuildSelectApdu(String aid) {
         // Format: [CLASS | INSTRUCTION | PARAMETER 1 | PARAMETER 2 | LENGTH | DATA]
+
         return HexStringToByteArray(SELECT_APDU_HEADER + String.format("%02X", aid.length() / 2) + aid);
     }
 
@@ -98,10 +115,10 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
      * @return String, containing hexadecimal representation.
      */
     public static String ByteArrayToHexString(byte[] bytes) {
-        final char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+        final char[] hexArray = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
         char[] hexChars = new char[bytes.length * 2];
         int v;
-        for ( int j = 0; j < bytes.length; j++ ) {
+        for (int j = 0; j < bytes.length; j++) {
             v = bytes[j] & 0xFF;
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
@@ -111,7 +128,7 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
 
     /**
      * Utility class to convert a hexadecimal string to a byte string.
-     *
+     * <p>
      * <p>Behavior with input strings containing non-hexadecimal characters is undefined.
      *
      * @param s String containing hexadecimal characters to convert
@@ -122,7 +139,7 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
+                    + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
     }
