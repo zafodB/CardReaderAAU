@@ -5,7 +5,6 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.filip.cardreaderaau.MyReaderCallback;
+import com.example.filip.cardreaderaau.Constants;
 import com.example.filip.cardreaderaau.R;
 
 import java.util.Timer;
@@ -78,9 +77,9 @@ public class WaitingFragment extends Fragment {
             public void run() {
                 mAnimation.stop();
 
-                if (status == MyReaderCallback.STATUS_TAG_DETECTED) {
+                if (status == Constants.STATUS_TAG_DETECTED) {
                     view.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.transition_green));
-                } else if (status == MyReaderCallback.STATUS_TAG_ERROR) {
+                } else if (status == Constants.STATUS_TAG_ERROR) {
                     view.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.transition_red));
                 } else {
                 }
@@ -92,11 +91,10 @@ public class WaitingFragment extends Fragment {
                 myImageView.startAnimation(animationFade);
 //                myImageView.setVisibility(View.INVISIBLE);
 
-                if (status == MyReaderCallback.STATUS_TAG_DETECTED) {
+                if (status == Constants.STATUS_TAG_DETECTED) {
                     myImageView.setBackgroundResource(R.drawable.checkmark);
-                } else if (status == MyReaderCallback.STATUS_TAG_ERROR) {
+                } else if (status == Constants.STATUS_TAG_ERROR) {
                     myImageView.setBackgroundResource(R.drawable.crossmark);
-                } else {
                 }
 
                 animationFade = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
@@ -140,9 +138,8 @@ public class WaitingFragment extends Fragment {
         }
     }
 
-
-    public int getSpinnerItem(){
-        return mSpinner.getSelectedItemPosition();
+    public Spinner getmSpinner() {
+        return mSpinner;
     }
 }
 

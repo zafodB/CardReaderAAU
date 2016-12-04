@@ -1,18 +1,21 @@
 package com.example.filip.cardreaderaau;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.nfc.tech.MifareUltralight;
 import android.util.Log;
-import android.webkit.WebViewFragment;
+
+import com.example.filip.cardreaderaau.networking.CardDetails;
+import com.example.filip.cardreaderaau.networking.MyRetrofitAPI;
+import com.example.filip.cardreaderaau.networking.RestService;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import layout.WaitingFragment;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by filip on 15/11/2016.
@@ -20,18 +23,10 @@ import layout.WaitingFragment;
 
 public class MyReaderCallback implements NfcAdapter.ReaderCallback {
 
-    public static final String TAG = "M_TAG";
-
-    public static final int STATUS_TAG_DETECTED = 1;
-    public static final int STATUS_TAG_ERROR = 0;
-
-    private static final String SELECT_APDU_HEADER = "00A40400";
-    private static final String ACCESSSYSTEM_AID = "F231120161";
-
-
     private StartAnimationInterface mStartAnim;
     private MainActivity currentActivity;
 
+    MyRetrofitAPI service;
 
     interface StartAnimationInterface {
         void notifyAnimation(int status, String message);
@@ -51,31 +46,31 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
     public void onTagDiscovered(Tag tag) {
         IsoDep mIsoDep = IsoDep.get(tag);
         MifareUltralight mMifare = MifareUltralight.get(tag);
-
-//        Log.i(TAG, "Tag discovered");
+        boolean readError = true;
 
         if (mIsoDep != null) {
             try {
                 mIsoDep.connect();
 
-                byte[] sendCommand = BuildSelectApdu(ACCESSSYSTEM_AID);
+                byte[] sendCommand = BuildSelectApdu(Constants.ACCESSSYSTEM_AID);
 
                 byte[] reply = mIsoDep.transceive(sendCommand);
 
-                String output = new String(reply);
+                String serialNo = new String(reply);
 
-                Log.i(TAG, output);
+                Log.i(Constants.TAG, serialNo);
+                readError = false;
 
-                mStartAnim.notifyAnimation(STATUS_TAG_DETECTED, currentActivity.getString(R.string.tag_found_msg));
-
+                contactServer(serialNo);
 
             } catch (IOException e) {
-                Log.i(TAG, "Caught following IOException");
-                Log.e(TAG, e.getMessage());
+                Log.i(Constants.TAG, "Caught following IOException");
+                Log.e(Constants.TAG, e.getMessage());
 //                Log.i(TAG, e.getStackTrace().toString());
                 e.printStackTrace();
+                readError = true;
             }
-        } else if (mMifare != null){
+        } else if (mMifare != null) {
             try {
 
                 mMifare.connect();
@@ -84,28 +79,70 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
 
                 String serialNo = "";
 
-                for (int i = 0; i <= 9 ; i++){
+                for (int i = 0; i <= 9; i++) {
                     serialNo = serialNo + (String.valueOf(tagData[i]));
                 }
 
-                Log.i(TAG, "Serial number is: " + serialNo);
+                Log.i(Constants.TAG, "Serial number is: " + serialNo);
+                readError = false;
 
-                mStartAnim.notifyAnimation(STATUS_TAG_DETECTED, currentActivity.getString(R.string.tag_found_msg));
+                contactServer(serialNo);
+
 
             } catch (IOException e) {
-                Log.i(TAG, "IO exception");
+                Log.i(Constants.TAG, "IO exception");
                 e.printStackTrace();
+                readError = true;
             }
-        }else {
-            mStartAnim.notifyAnimation(STATUS_TAG_ERROR, currentActivity.getString(R.string.tag_error_msg));
         }
+
+        if (readError) {
+            mStartAnim.notifyAnimation(Constants.STATUS_TAG_ERROR, currentActivity.getString(R.string.tag_error_msg));
+        }
+        else {
+            mStartAnim.notifyAnimation(Constants.STATUS_TAG_DETECTED, currentActivity.getString(R.string.tag_found_msg));
+        }
+        //TODO add other status options (e.g. card found, but access revoked).
     }
 
+
+    private boolean contactServer(String cardID){
+        service = RestService.getInstance();
+
+        WaitingFragment fragment = currentActivity.getFragment();
+        int accessConst = (int) fragment.getmSpinner().getSelectedItemId();
+
+
+        //TODO change access level selection.
+        Call<Boolean> call = service.checkCard(wrapCardData(cardID, accessConst));
+        call.enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                //TODO handle shit here
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+
+            }
+        });
+
+        return false;
+    }
+
+    private CardDetails wrapCardData(String cardID, int access){
+        CardDetails card = new CardDetails();
+
+        card.setCardID(cardID);
+        card.setAccessLvl(access);
+
+        return card;
+    }
 
     public static byte[] BuildSelectApdu(String aid) {
         // Format: [CLASS | INSTRUCTION | PARAMETER 1 | PARAMETER 2 | LENGTH | DATA]
 
-        return HexStringToByteArray(SELECT_APDU_HEADER + String.format("%02X", aid.length() / 2) + aid);
+        return HexStringToByteArray(Constants.SELECT_APDU_HEADER + String.format("%02X", aid.length() / 2) + aid);
     }
 
     /**

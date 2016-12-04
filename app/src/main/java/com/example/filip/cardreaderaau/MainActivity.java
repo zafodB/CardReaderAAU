@@ -1,19 +1,16 @@
 package com.example.filip.cardreaderaau;
 
-import android.content.Intent;
 import android.nfc.NfcAdapter;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 
 import layout.WaitingFragment;
 
 public class MainActivity extends FragmentActivity implements MyReaderCallback.StartAnimationInterface{
 
-    public static final String TAG = "M_TAG";
-    public static final String FRAGMENT_TAG = "readerFragment";
+    private static final String FRAGMENT_TAG = "readerFragment";
 
     private WaitingFragment fragment;
 
@@ -37,17 +34,21 @@ public class MainActivity extends FragmentActivity implements MyReaderCallback.S
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
 
-        MyReaderCallback mreadercallback = new MyReaderCallback(this);
+        MyReaderCallback mReadercallback = new MyReaderCallback(this);
 
-        mNfcAdapter.enableReaderMode(this, mreadercallback, READER_FLAGS, null);
+        mNfcAdapter.enableReaderMode(this, mReadercallback, READER_FLAGS, null);
     }
 
     @Override
     public void notifyAnimation(int status, String message) {
         if (fragment == null){
-            Log.i(TAG, "Fragment not ready yet");
+            Log.i(Constants.TAG, "Fragment not ready yet");
         }
         else
             fragment.triggerAnim(status, message);
+    }
+
+    WaitingFragment getFragment(){
+        return (WaitingFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
     }
 }

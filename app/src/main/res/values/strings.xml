@@ -9,10 +9,10 @@
 
 
     <string-array name="spinner_items">
-        <item>Aalborg University</item>
-        <item>Fitness World</item>
-        <item>KAB</item>
-        <item>DTU</item>
+        <item>ACCESS_LVL_ADMIN</item>
+        <item>ACCESS_LVL_STAFF</item>
+        <item>ACCESS_LVL_STUDENT</item>
+        <item>ACCESS_LVL_GUEST</item>
 
     </string-array>
 

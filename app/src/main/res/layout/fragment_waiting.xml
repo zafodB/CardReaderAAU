@@ -1,44 +1,45 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="layout.WaitingFragment">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="layout.WaitingFragment">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="160dp"
         android:layout_height="160dp"
-        android:layout_marginTop="40dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
 
         />
 
     <TextView
-        android:text="@string/status_message_text"
+        android:id="@+id/status_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:id="@+id/status_message"
+        android:text="@string/status_message_text"
 
-        android:textSize="25sp"
         android:textColor="@color/white"
+        android:textSize="25sp"
 
         />
 
     <Spinner
-        android:layout_width="50dp"
+        android:id="@+id/spinner"
+
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/status_message"
         android:layout_centerHorizontal="true"
+        android:layout_marginLeft="75dp"
+        android:layout_marginRight="75dp"
         android:layout_marginTop="71dp"
 
-        android:prompt="@string/choose_institution"
         android:entries="@array/spinner_items"
-
-        android:id="@+id/spinner"
-        android:minWidth="30dp"/>
+        android:prompt="@string/choose_institution"/>
 
 </RelativeLayout>
