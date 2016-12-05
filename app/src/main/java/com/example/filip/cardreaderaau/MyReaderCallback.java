@@ -6,7 +6,8 @@ import android.nfc.tech.IsoDep;
 import android.nfc.tech.MifareUltralight;
 import android.util.Log;
 
-import com.example.filip.cardreaderaau.networking.CardDetails;
+import com.example.filip.cardreaderaau.networking.Access;
+import com.example.filip.cardreaderaau.networking.Details;
 import com.example.filip.cardreaderaau.networking.MyRetrofitAPI;
 import com.example.filip.cardreaderaau.networking.RestService;
 
@@ -26,10 +27,10 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
     private StartAnimationInterface mStartAnim;
     private MainActivity currentActivity;
 
-    MyRetrofitAPI service;
+    private int status;
 
     interface StartAnimationInterface {
-        void notifyAnimation(int status, String message);
+        void notifyAnimation(int status);
     }
 
     MyReaderCallback(MainActivity activity) {
@@ -46,7 +47,6 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
     public void onTagDiscovered(Tag tag) {
         IsoDep mIsoDep = IsoDep.get(tag);
         MifareUltralight mMifare = MifareUltralight.get(tag);
-        boolean readError = true;
 
         if (mIsoDep != null) {
             try {
@@ -59,16 +59,15 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
                 String serialNo = new String(reply);
 
                 Log.i(Constants.TAG, serialNo);
-                readError = false;
 
-                contactServer(serialNo);
+                contactServer(serialNo, Constants.TAG_TYPE_USER);
 
             } catch (IOException e) {
                 Log.i(Constants.TAG, "Caught following IOException");
                 Log.e(Constants.TAG, e.getMessage());
-//                Log.i(TAG, e.getStackTrace().toString());
-                e.printStackTrace();
-                readError = true;
+
+                status = Constants.STATUS_TAG_ERROR;
+                notifyAnim(status);
             }
         } else if (mMifare != null) {
             try {
@@ -84,84 +83,123 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
                 }
 
                 Log.i(Constants.TAG, "Serial number is: " + serialNo);
-                readError = false;
 
-                contactServer(serialNo);
-
+                contactServer(serialNo, Constants.TAG_TYPE_CARD);
 
             } catch (IOException e) {
-                Log.i(Constants.TAG, "IO exception");
-                e.printStackTrace();
-                readError = true;
+                Log.i(Constants.TAG, e.getMessage());
+
+                status = Constants.STATUS_TAG_ERROR;
+                notifyAnim(status);
             }
         }
-
-        if (readError) {
-            mStartAnim.notifyAnimation(Constants.STATUS_TAG_ERROR, currentActivity.getString(R.string.tag_error_msg));
-        }
-        else {
-            mStartAnim.notifyAnimation(Constants.STATUS_TAG_DETECTED, currentActivity.getString(R.string.tag_found_msg));
-        }
-        //TODO add other status options (e.g. card found, but access revoked).
     }
 
 
-    private boolean contactServer(String cardID){
-        service = RestService.getInstance();
-
+    private void contactServer(String cardID, int tagType){
         WaitingFragment fragment = currentActivity.getFragment();
-        int accessConst = (int) fragment.getmSpinner().getSelectedItemId();
+        final int accessConst = (int) fragment.getmSpinner().getSelectedItemId();
+        //TODO change access level selection ^^^
+
+        MyRetrofitAPI service = RestService.getInstance();
+
+        //TODO remake so route is not hardcoded
+        Call<Access> call = null;
+        switch (tagType){
+            case Constants.TAG_TYPE_CARD:
+                call = service.checkCardCard("aau", (Details.CardDetails) wrapCardData(tagType, cardID, accessConst));
+                break;
+            case Constants.TAG_TYPE_USER:
+                call = service.checkCardHCE("aau", (Details.UserDetails) wrapCardData(tagType, cardID, accessConst));
+                break;
+        }
 
 
-        //TODO change access level selection.
-        Call<Boolean> call = service.checkCard(wrapCardData(cardID, accessConst));
-        call.enqueue(new Callback<Boolean>() {
+        Log.i(Constants.TAG, "Access level is: " + String.valueOf(accessConst));
+        call.enqueue(new Callback<Access>() {
             @Override
-            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                //TODO handle shit here
+            public void onResponse(Call<Access> call, Response<Access> response) {
+//                TODO handle shit here
+
+//                call.request().body()
+                Log.i(Constants.TAG, "The body of the call is: " + call.request().body().toString());
+
+                boolean accessGranted = false;
+                try {
+                    Log.i(Constants.TAG, "The message is: " + response.body().getMessage());
+                    accessGranted = response.body().isAccessGranted();
+                }
+                catch (NullPointerException e){
+                    Log.i(Constants.TAG, "Caught null-pointer exception with following message:" + e.getMessage());
+                }
+
+                if(accessGranted){
+                    Log.i(Constants.TAG, "Hurray, access granted");
+                    notifyAnim(Constants.STATUS_ACCESS_GRANTED);
+                }
+                else {
+                    Log.i(Constants.TAG, "Naay, access denied");
+                    notifyAnim(Constants.STATUS_ACCESS_DENIED);
+                }
             }
 
             @Override
-            public void onFailure(Call<Boolean> call, Throwable t) {
-
+            public void onFailure(Call<Access> call, Throwable t) {
+                Log.i(Constants.TAG,"On Failure called with following message: " + t.getMessage());
+//                notifyAnim(Constants.STATUS_SERVER_ERROR);
             }
         });
-
-        return false;
     }
 
-    private CardDetails wrapCardData(String cardID, int access){
-        CardDetails card = new CardDetails();
+    private Details wrapCardData(int tagType, String cardID, int access){
+        switch (tagType){
+            case Constants.TAG_TYPE_CARD:
+                Details.CardDetails card = new Details.CardDetails();
+                card.setCardID(cardID);
+                card.setAccessLvl(access);
 
-        card.setCardID(cardID);
-        card.setAccessLvl(access);
+                Log.i(Constants.TAG, "wrapping data card");
+                return card;
 
-        return card;
+            case Constants.TAG_TYPE_USER:
+                Details.UserDetails user = new Details.UserDetails();
+                user.setCardID(cardID);
+                user.setAccessLvl(access);
+                Log.i(Constants.TAG, "wrapping data user");
+                return user;
+
+            default:
+                return null;
+        }
     }
 
-    public static byte[] BuildSelectApdu(String aid) {
+    private void notifyAnim(int status){
+        mStartAnim.notifyAnimation(status);
+    }
+
+    private static byte[] BuildSelectApdu(String aid) {
         // Format: [CLASS | INSTRUCTION | PARAMETER 1 | PARAMETER 2 | LENGTH | DATA]
 
         return HexStringToByteArray(Constants.SELECT_APDU_HEADER + String.format("%02X", aid.length() / 2) + aid);
     }
 
-    /**
-     * Utility class to convert a byte array to a hexadecimal string.
-     *
-     * @param bytes Bytes to convert
-     * @return String, containing hexadecimal representation.
-     */
-    public static String ByteArrayToHexString(byte[] bytes) {
-        final char[] hexArray = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-        char[] hexChars = new char[bytes.length * 2];
-        int v;
-        for (int j = 0; j < bytes.length; j++) {
-            v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
+//    /**
+//     * Utility class to convert a byte array to a hexadecimal string.
+//     *
+//     * @param bytes Bytes to convert
+//     * @return String, containing hexadecimal representation.
+//     */
+//    public static String ByteArrayToHexString(byte[] bytes) {
+//        final char[] hexArray = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+//        char[] hexChars = new char[bytes.length * 2];
+//        int v;
+//        for (int j = 0; j < bytes.length; j++) {
+//            v = bytes[j] & 0xFF;
+//            hexChars[j * 2] = hexArray[v >>> 4];
+//            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+//        }
+//        return new String(hexChars);
+//    }
 
     /**
      * Utility class to convert a hexadecimal string to a byte string.
@@ -171,7 +209,7 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
      * @param s String containing hexadecimal characters to convert
      * @return Byte array generated from input
      */
-    public static byte[] HexStringToByteArray(String s) {
+    private static byte[] HexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {

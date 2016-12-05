@@ -40,12 +40,13 @@ public class MainActivity extends FragmentActivity implements MyReaderCallback.S
     }
 
     @Override
-    public void notifyAnimation(int status, String message) {
+    public void notifyAnimation(int status) {
         if (fragment == null){
             Log.i(Constants.TAG, "Fragment not ready yet");
         }
-        else
-            fragment.triggerAnim(status, message);
+        else {
+//            fragment.triggerAnim(status);
+        }
     }
 
     WaitingFragment getFragment(){

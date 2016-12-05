@@ -23,8 +23,6 @@ import java.util.TimerTask;
 
 public class WaitingFragment extends Fragment {
 
-    public static final String TAG = "M_TAG";
-
     ImageView myImageView;
     AnimationDrawable mAnimation;
     Animation animationFade;
@@ -34,8 +32,6 @@ public class WaitingFragment extends Fragment {
 
     private String messagePasser;
     Spinner mSpinner;
-
-    private int status;
 
 
     public WaitingFragment() {
@@ -60,16 +56,12 @@ public class WaitingFragment extends Fragment {
 
         runAnimation();
 
-
         return view;
-
 
     }
 
-    public void triggerAnim(final int status, String message) {
+    public void triggerAnim(final int status) {
 
-        messagePasser = message;
-        this.status = status;
 
         getActivity().runOnUiThread(new Runnable() {
 
@@ -77,11 +69,17 @@ public class WaitingFragment extends Fragment {
             public void run() {
                 mAnimation.stop();
 
-                if (status == Constants.STATUS_TAG_DETECTED) {
-                    view.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.transition_green));
-                } else if (status == Constants.STATUS_TAG_ERROR) {
-                    view.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.transition_red));
-                } else {
+                switch (status){
+                    case Constants.STATUS_ACCESS_GRANTED:
+                        view.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.transition_green));
+                        messagePasser = getString(R.string.access_granted_msg);
+                        break;
+                    case Constants.STATUS_TAG_ERROR:
+                        view.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.transition_red));
+                        messagePasser = getString(R.string.tag_error_msg);
+                        break;
+//                    case Constants.STATUS_A
+
                 }
 
                 transition = (TransitionDrawable) view.getBackground();
@@ -91,7 +89,7 @@ public class WaitingFragment extends Fragment {
                 myImageView.startAnimation(animationFade);
 //                myImageView.setVisibility(View.INVISIBLE);
 
-                if (status == Constants.STATUS_TAG_DETECTED) {
+                if (status == Constants.STATUS_ACCESS_GRANTED) {
                     myImageView.setBackgroundResource(R.drawable.checkmark);
                 } else if (status == Constants.STATUS_TAG_ERROR) {
                     myImageView.setBackgroundResource(R.drawable.crossmark);
