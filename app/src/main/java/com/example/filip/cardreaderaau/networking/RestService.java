@@ -3,7 +3,6 @@ package com.example.filip.cardreaderaau.networking;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-
 /**
  * Created by filip on 01/12/2016.
  */

@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_blue"
     android:paddingBottom="0dp"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    android:background="@color/background_blue"
-    tools:context="com.example.filip.cardreaderaau.MainActivity">
+    tools:context="com.example.filip.cardreaderaau.layout.MainActivity">
 
     <FrameLayout
+        android:id="@+id/waiting_fragment_placeholder"
+        android:name="layout.WaitingFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="layout.WaitingFragment"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/waiting_fragment_placeholder"/>
+        android:layout_centerVertical="true"/>
 </RelativeLayout>

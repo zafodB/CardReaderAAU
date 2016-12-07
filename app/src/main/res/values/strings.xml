@@ -4,7 +4,9 @@
     <string name="status_message_text">Waiting for a tag</string>
     <string name="tag_error_msg">Error reading a tag. Try again.</string>
 
-    <string name="access_granted_msg">Tag found!</string>
+    <string name="access_denied_msg">ACCESS DENIED</string>
+    <string name="access_granted_msg">ACCESS GRANTED</string>
+    <string name="server_error_msg">SERVER ERROR. \nPlease try again later.</string>
 
 
     <string-array name="spinner_items">

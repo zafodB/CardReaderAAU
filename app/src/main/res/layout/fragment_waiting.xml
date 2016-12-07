@@ -2,7 +2,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="layout.WaitingFragment">
+                tools:context=".layout.WaitingFragment">
 
     <ImageView
         android:id="@+id/imageView"
@@ -32,11 +32,9 @@
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/status_message"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="75dp"
-        android:layout_marginRight="75dp"
-        android:layout_marginTop="71dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
 
         android:entries="@array/spinner_items"
         android:prompt="@string/choose_institution"/>
