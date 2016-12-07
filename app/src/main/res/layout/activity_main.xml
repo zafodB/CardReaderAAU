@@ -11,7 +11,7 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    tools:context="com.example.filip.cardreaderaau.layout.MainActivity">
+    tools:context="com.example.filip.cardreaderaau.ui.MainActivity">
 
     <FrameLayout
         android:id="@+id/waiting_fragment_placeholder"
