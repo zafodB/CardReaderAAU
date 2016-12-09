@@ -146,14 +146,13 @@ public class MyReaderCallback implements NfcAdapter.ReaderCallback {
                 card.setCardID(cardID);
                 card.setAccessLvl(access);
 
-                Log.i(Constants.TAG, "wrapping data card");
                 return card;
 
             case Constants.TAG_TYPE_USER:
                 Details.UserDetails user = new Details.UserDetails();
                 user.setCardID(cardID);
                 user.setAccessLvl(access);
-                Log.i(Constants.TAG, "wrapping data user");
+
                 return user;
 
             default:

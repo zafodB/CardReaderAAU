@@ -32,9 +32,7 @@ public class MainActivity extends FragmentActivity implements MyReaderCallback.S
         }
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-
         MyReaderCallback mReadercallback = new MyReaderCallback(this);
-
         mNfcAdapter.enableReaderMode(this, mReadercallback, READER_FLAGS, null);
     }
 

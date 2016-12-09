@@ -21,7 +21,6 @@ public class Details {
         }
 
         public void setCardID(String cardID) {
-            Log.i(Constants.TAG, "Setting cardID under user");
             this.cardID = cardID;
         }
     }

@@ -1,0 +1,115 @@
+@startuml
+package com.example.filip.cardreaderaau{
+package networking{
+
+class Access {
+String message;
+boolean accessGranted;
+
++ String getMessage();
++ boolean isAccessGranted();
+}
+
+class Details
+
+class UserDetails extends Details {
+String cardID;
+String accessLvl;
+
++ void setAccessLvl();
++ void setCardID();
+}
+
+class CardDetails extends Details{
+String cardID;
+String accessLvl;
+
++ void setAccessLvl();
++ void setCardID();
+}
+
+note "Note that only difference between\nthese two classes is in annotation\n@SerializedName in front of\n the cardID variable." as N1
+CardDetails .. N1
+UserDetails .. N1
+
+
+interface MyRetrofitApi {
++ Call<Access> checkCardCard(String, CardDetails);
++ Call<Access> checkCardHCE(String, UserDetails);
+}
+
+class RestService{
++ {static} String SERVER_URL;
++ {static} MyRetrofitAPI;
+
++ {static} MyRetrofitAPI getInstance();
+}
+
+}
+package ui{
+class MainActivity implements StartAnimationInterface{
+
+- {static} String FRAGMENT_TAG;
+- WaitingFragment;
++ {static} int READER_FLAGS;
+
+# void onCreate(Bundle)
++ void notifyAnimation(int)
+WaitingFragment getFragment();
+}
+
+class MyReaderCallback {
+- StartAnimationInterface mStartAnim;
+- MainActivity currentActivity;
+- int status;
+
+MyReaderCallback(MainActivity);
++ void onTagDiscovered(Tag);
+- void contactServer(String, int);
+- Details wrapCardData(int, String, int);
+
+- void notifyAnim(int);
+- {static} byte[] BuildSelectApdu(String);
+- {static} byte[] HexStringToByteArray(String);
+}
+
+interface StartAnimationInterface{
+void notifyAnimation(int);
+}
+
+class WaitingFragment{
+    ImageView myImageView;
+    AnimationDrawable mAnimation;
+    Animation animationFade;
+    TextView statusMessage;
+    TransitionDrawable transition;
+    View view;
+
+    private String messagePasser;
+    Spinner mSpinner;
+
++ WaitingFragment();
++ void onCreate(Bundle);
++ View onCreateView(LayoutInflater,
+ViewGroup, Bundle);
++ void triggerAnim(int);
+void runAnimation();
++ Spinner getmSpinner();
+}
+
+}
+
+class Constants {
++ {static} String TAG;
++ {static} int STATUS_TAG_ERROR;
++ {static}  int STATUS_ACCESS_GRANTED;
++ {static}  int STATUS_ACCESS_DENIED;
++ {static}  int STATUS_SERVER_ERROR;
++ {static}  int TAG_TYPE_USER;
++ {static}  int TAG_TYPE_CARD;
++ {static}  String SELECT_APDU_HEADER;
++ {static}  String ACCESSSYSTEM_AID;
+}
+
+}
+@enduml
