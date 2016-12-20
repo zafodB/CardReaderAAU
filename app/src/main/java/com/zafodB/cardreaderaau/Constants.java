@@ -1,4 +1,4 @@
-package com.example.filip.cardreaderaau;
+package com.zafodB.cardreaderaau;
 
 /**
  * Created by filip on 04/12/2016.

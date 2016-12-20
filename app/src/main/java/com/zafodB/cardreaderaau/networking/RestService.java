@@ -1,4 +1,4 @@
-package com.example.filip.cardreaderaau.networking;
+package com.zafodB.cardreaderaau.networking;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

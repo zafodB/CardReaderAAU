@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CardReaderAAU</string>
+    <string name="app_name">VIMFO Card Reader</string>
 
     <string name="status_message_text">Waiting for a tag</string>
     <string name="tag_error_msg">Error reading a tag. Try again.</string>

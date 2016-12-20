@@ -1,4 +1,4 @@
-package com.example.filip.cardreaderaau.networking;
+package com.zafodB.cardreaderaau.networking;
 
 import com.google.gson.annotations.SerializedName;
 

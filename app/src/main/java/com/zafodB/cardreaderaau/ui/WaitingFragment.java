@@ -1,4 +1,4 @@
-package com.example.filip.cardreaderaau.ui;
+package com.zafodB.cardreaderaau.ui;
 
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -14,8 +14,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.filip.cardreaderaau.Constants;
-import com.example.filip.cardreaderaau.R;
+import com.zafodB.cardreaderaau.Constants;
+import com.zafodB.cardreaderaau.R;
 
 import java.util.Timer;
 import java.util.TimerTask;

@@ -1,4 +1,4 @@
-package com.example.filip.cardreaderaau.ui;
+package com.zafodB.cardreaderaau.ui;
 
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
-import com.example.filip.cardreaderaau.Constants;
-import com.example.filip.cardreaderaau.R;
+import com.zafodB.cardreaderaau.Constants;
+import com.zafodB.cardreaderaau.R;
 
 public class MainActivity extends FragmentActivity implements MyReaderCallback.StartAnimationInterface {
 

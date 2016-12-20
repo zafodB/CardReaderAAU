@@ -1,8 +1,8 @@
-package com.example.filip.cardreaderaau.networking;
+package com.zafodB.cardreaderaau.networking;
 
 import android.util.Log;
 
-import com.example.filip.cardreaderaau.Constants;
+import com.zafodB.cardreaderaau.Constants;
 import com.google.gson.annotations.SerializedName;
 
 /**
