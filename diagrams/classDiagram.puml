@@ -1,7 +1,9 @@
 @startuml
+
+left to right direction
+
 package com.example.filip.cardreaderaau{
 package networking{
-
 class Access {
 String message;
 boolean accessGranted;

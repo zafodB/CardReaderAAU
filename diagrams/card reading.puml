@@ -1,0 +1,31 @@
+@startuml
+(*)  --> "onTagDiscovered(Tag tag)"
+If "The type of tag\nis isoDep" then
+--> [True] "Send the command\nwith AID and APDU"
+--> "Wait for the reply"
+--> "Extract userID from the reply"
+--> "Contact the server for authentication" as CS
+note right : If this method is called with isoDep as tag type\n"/users" part of database is contacted.\nIf the tag type is Mifare Ultralight, "/card" part\n is contacted
+
+else
+-> [False] "Proceed"
+
+  if "The type of tag\nis Mifare Ultralight" then
+    --> [True] "Read tag serial number"
+    --> CS
+
+    else
+    -> [False] "Display error message"
+    -->(*)
+    endif
+
+Endif
+
+CS --> if "The tag is authorized to open door" then
+              --> [True] "Display 'Access granted'\nmessage"
+              ->(*)
+              else
+              -> [False] "Display 'Access denied'\nmessage"
+              -->(*)
+
+@enduml
